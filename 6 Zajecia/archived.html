@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Archived Games</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+<body>
+    <h1>Archived Games</h1>
+    
+    <div class="search-container">
+        <input id="uuid" name="uuid" value="game" placeholder="Enter game ID">
+        <br><br>
+        <button onclick="searchGame()">Wyszukaj</button>
+        <br><br>
+        <button onclick="window.location.href='/'">Back to Home</button>
+    </div>
+    
+    <div id="results" class="results-container"></div>
+    
+    <script>
+        function searchGame() {
+            const uuid = document.getElementById('uuid').value;
+            
+            axios.get(`/archived-games?uuid=${uuid}`)
+                .then(response => {
+                    const data = response.data;
+                    const resultsDiv = document.getElementById('results');
+                    
+                    if (data.game) {
+                        // Game found, display details
+                        const gameInfo = `
+                            <div class="game-info">
+                                <h3>Game: ${data.game.uuid}</h3>
+                                <p>Secret Code: ${data.game.secretCode.join(', ')}</p>
+                                <button onclick="startGame('${data.game.uuid}')">Play this game</button>
+                            </div>
+                        `;
+                        resultsDiv.innerHTML = gameInfo;
+                    } else {
+                        // Game not found
+                        resultsDiv.innerHTML = '<p class="error">Game not found</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching game:', error);
+                    document.getElementById('results').innerHTML = 
+                        `<p class="error">Error: ${error.message}</p>`;
+                });
+        }
+        
+        function startGame(uuid) {
+            axios.post('/new-game', { uuid })
+                .then(response => {
+                    const data = response.data;
+                    window.location.href = `/game.html?uuid=${data.uuid}&secretCode=${data.secretCode.join(',')}`;
+                })
+                .catch(error => {
+                    console.error('Error starting game:', error);
+                    alert('Error starting game: ' + error.message);
+                });
+        }
+    </script>
+</body>
+</html>
