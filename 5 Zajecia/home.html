@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Title</title>
+</head>
+<body>
+    <h1>MASTERMIND</h1>
+    <a href="https://en.wikipedia.org/wiki/Mastermind_%28board_game%29">Instrukcje</a>
+
+    <!-- Form to start a new game -->
+    <form id="gameForm" action="/new-game" method="POST">
+        <input type="hidden" id="uuid" name="uuid" value="game1">
+        <button onclick="startNewGame()">Zacznij nową grę</button>
+    </form>
+    <button type="button" onclick="window.location.href='archived.html'">Zobacz archiwalne gry</button>
+    <script>
+        function generateUUID() {
+            return 'game' + Math.floor(Math.random() * 10000);
+        }
+        document.getElementById('uuid').value = generateUUID();  
+    </script>
+</body>
+</html>
