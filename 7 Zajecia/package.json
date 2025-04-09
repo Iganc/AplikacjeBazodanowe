@@ -1,0 +1,25 @@
+{
+    "name": "express-ejs-app",
+    "version": "1.0.0",
+    "description": "Aplikacja Express.js z wykorzystaniem szablonów EJS",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "express",
+        "ejs",
+        "nodejs"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "ejs": "^3.1.9",
+        "express": "^4.21.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    }
+}
