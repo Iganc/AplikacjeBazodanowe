@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>Produkty</h1>
+<ul>
+    <%
+    const ListaProduktow = [
+        'Masło', 
+        'Chleb pszenny',
+        'Mleko', 
+        'Ser żółty', 
+        'Jogurt naturalny',
+        'Jajka',
+        'Mąka pszenna',
+        'Cukier biały',
+        'Olej rzepakowy',
+        'Makaron spaghetti',
+        'Ryż biały',
+        'Kawa ziarnista',
+        'Herbata czarna',
+        'Czekolada mleczna',
+        'Jabłka'
+    ];
+    const ceny = {
+        'Masło': 8.99,
+        'Chleb pszenny': 4.99,
+        'Mleko': 3.99, 
+        'Ser żółty': 14.99, 
+        'Jogurt naturalny': 2.99,
+        'Jajka': 9.99,
+        'Mąka pszenna': 4.99,
+        'Cukier biały': 5.99,
+        'Olej rzepakowy': 12.99,
+        'Makaron spaghetti': 6.99,
+        'Ryż biały': 7.99,
+        'Kawa ziarnista': 24.99,
+        'Herbata czarna': 10.99,
+        'Czekolada mleczna': 8.99,
+        'Jabłka': 6.99
+    };
+    %>
+    
+    <% for(let i = 0; i < ListaProduktow.length; i++){ %>
+        <li>
+            <%= ListaProduktow[i] %> - <%= ceny[ListaProduktow[i]] %> zł - 
+            <form action="/add-to-cart" method="POST" style="display: inline;">
+                <input type="hidden" name="product" value="<%= ListaProduktow[i] %>">
+                <input type="hidden" name="price" value="<%= ceny[ListaProduktow[i]] %>">
+                <button type="submit">Dodaj do koszyka</button>
+            </form>
+        </li>
+    <% } %>
+</ul>
+
+
+<a href="/cart">Przejdź do koszyka</a>
+</body>
+</html> 
