@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Koszyk</title>
+</head>
+<body>
+    <h1>Twój koszyk</h1>
+    
+    <% if(typeof cart !== 'undefined' && cart && cart.length > 0) { %>
+        <table border="1">
+            <tr>
+                <th>Produkt</th>
+                <th>Cena</th>
+            </tr>
+            <% 
+            let total = 0;
+            for(let i = 0; i < cart.length; i++) { 
+                total += cart[i].price;
+            %>
+                <tr>
+                    <td><%= cart[i].name %></td>
+                    <td><%= cart[i].price %> zł</td>
+                    <form action="/remove-from-cart" method="POST" style="display: inline;">
+                        <input type="hidden" name="product" value="<%= cart[i].name %>">
+                        <input type="hidden" name="price" value="<%= cart[i].price %>">
+                        <button type="submit">Usuń z koszyka</button>
+                    </form>
+                </tr>
+                
+            <% } %>
+            <tr>
+                <td><strong>Razem:</strong></td>
+                <td><strong><%= total %> zł</strong></td>
+            </tr>
+        </table>
+    <% } else { %>
+        <p>Koszyk jest pusty</p>
+    <% } %>
+    
+    <p><a href="/products">Wróć do zakupów</a></p>
+</body>
+</html>
