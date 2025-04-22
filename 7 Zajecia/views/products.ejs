@@ -6,51 +6,26 @@
 <body>
 
 <h1>Produkty</h1>
+<div id="filterProduct">
+    <%  let minPrice = 0; %>
+    <%  let maxPrice = 999999; %>
+
+    <input type="number" id="minPrice" placeholder="Wprowadź minimalną cene">
+    <input type="number" id="maxPrice" placeholder="Wprowadź maksymalna cene">
+</div>
+<div id="sortProducts">
+    <input type="radio" id="sortAlf" name="sortOption" value="1"> <label for="1">Alfabetycznie</label>
+    <input type="radio" id="sortMal" name="sortOption" value="2"> <label for="2">Malejąco</label>
+    <input type="radio" id="sortRos" name="sortOption" value="3"> <label for="3">Rosnąco</label>
+</div>
 <ul>
-    <%
-    const ListaProduktow = [
-        'Masło', 
-        'Chleb pszenny',
-        'Mleko', 
-        'Ser żółty', 
-        'Jogurt naturalny',
-        'Jajka',
-        'Mąka pszenna',
-        'Cukier biały',
-        'Olej rzepakowy',
-        'Makaron spaghetti',
-        'Ryż biały',
-        'Kawa ziarnista',
-        'Herbata czarna',
-        'Czekolada mleczna',
-        'Jabłka'
-    ];
-    const ceny = {
-        'Masło': 8.99,
-        'Chleb pszenny': 4.99,
-        'Mleko': 3.99, 
-        'Ser żółty': 14.99, 
-        'Jogurt naturalny': 2.99,
-        'Jajka': 9.99,
-        'Mąka pszenna': 4.99,
-        'Cukier biały': 5.99,
-        'Olej rzepakowy': 12.99,
-        'Makaron spaghetti': 6.99,
-        'Ryż biały': 7.99,
-        'Kawa ziarnista': 24.99,
-        'Herbata czarna': 10.99,
-        'Czekolada mleczna': 8.99,
-        'Jabłka': 6.99
-    };
-    %>
-    
-    <% for(let i = 0; i < ListaProduktow.length; i++){ %>
-        <li>
-            <%= ListaProduktow[i] %> - <%= ceny[ListaProduktow[i]] %> zł - 
+    <% for(let i = 0; i < products.length; i++){ %>
+        <li class="product" data-price="<%= prices[products[i]] %>">
+            <%= products[i] %> - <%= prices[products[i]] %> zł -
             <form action="/add-to-cart" method="POST" style="display: inline;">
-                <input type="hidden" name="product" value="<%= ListaProduktow[i] %>">
-                <input type="hidden" name="price" value="<%= ceny[ListaProduktow[i]] %>">
-                <button type="submit">Dodaj do koszyka</button>
+                <input type="hidden" name="product" value="<%= products[i] %>">
+                <input type="hidden" name="price" value="<%= prices[products[i]] %>">
+                <button type="submit">Dodaj do koszyka </button>
             </form>
         </li>
     <% } %>
@@ -58,5 +33,77 @@
 
 
 <a href="/cart">Przejdź do koszyka</a>
+
+<script>
+    const minInput = document.getElementById("minPrice");
+    const maxInput = document.getElementById("maxPrice");
+    const products = document.querySelectorAll(".product");
+
+    window.onload = function() {
+        const savedMin = localStorage.getItem('minPrice');
+        const savedMax = localStorage.getItem('maxPrice');
+
+        if (savedMin) minInput.value = savedMin;
+        if (savedMax) maxInput.value = savedMax;
+
+        filterProduct();
+    };
+
+    function filterProduct(){
+        const minValue = parseFloat(minInput.value) || 0;
+        const maxValue = parseFloat(maxInput.value) || Infinity;
+
+        localStorage.setItem('minPrice', minInput.value);
+        localStorage.setItem('maxPrice', maxInput.value);
+
+            products.forEach(p => {
+                const price = parseFloat(p.dataset.price);
+                p.style.display = (price >= minValue && price <= maxValue) ? "list-item" : "none";
+            });
+        }
+
+        minInput.addEventListener("input", filterProduct);
+        maxInput.addEventListener("input", filterProduct);
+
+
+    const sortAlphabetically = document.getElementById("sortAlf");
+    const sortMalejacy = document.getElementById("sortMal");
+    const sortRosnacy = document.getElementById("sortRos");
+    const productsList = document.querySelector("ul");
+
+    function sortProducts() {
+        const productItems = Array.from(products).filter(p => p.style.display !== "none");
+
+        if (sortAlphabetically.checked) {
+            productItems.sort((a, b) => {
+                const nameA = a.textContent.split(" - ")[0];
+                const nameB = b.textContent.split(" - ")[0];
+                return nameA.localeCompare(nameB);
+            });
+        } else if (sortMalejacy.checked) {
+            productItems.sort((a, b) => {
+                const priceA = parseFloat(a.dataset.price);
+                const priceB = parseFloat(b.dataset.price);
+                return priceB - priceA;
+            });
+        } else if (sortRosnacy.checked) {
+            productItems.sort((a, b) => {
+                const priceA = parseFloat(a.dataset.price);
+                const priceB = parseFloat(b.dataset.price);
+                return priceA - priceB;
+            });
+        }
+
+        // Reorder items in the DOM
+        productItems.forEach(item => {
+            productsList.appendChild(item);
+        });
+    }
+
+    sortAlphabetically.addEventListener("change", sortProducts);
+    sortMalejacy.addEventListener("change", sortProducts);
+    sortRosnacy.addEventListener("change", sortProducts);
+</script>
+
 </body>
 </html> 
