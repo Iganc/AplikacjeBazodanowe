@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Person</title>
+</head>
+<body>
+    <h1>Create New Person</h1>
+
+    <form id="createForm">
+        <div>
+            <label for="name">First Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <div>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+
+        <div>
+            <label for="gen">Gender (m/f):</label>
+            <input type="text" id="gen" name="gen" maxlength="1" required>
+        </div>
+
+        <div>
+            <label for="brth">Birth Date:</label>
+            <input type="date" id="brth" name="brth" required>
+        </div>
+
+        <div>
+            <label for="pesel">PESEL:</label>
+            <input type="text" id="pesel" name="pesel" maxlength="11" required>
+        </div>
+
+        <button type="submit">Create Person</button>
+    </form>
+
+    <div id="message"></div>
+    <a href="/">Back to Home</a>
+
+    <script>
+        document.getElementById('createForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = {
+                name: document.getElementById('name').value,
+                lastName: document.getElementById('lastName').value,
+                gen: document.getElementById('gen').value,
+                brth: document.getElementById('brth').value,
+                pesel: document.getElementById('pesel').value
+            };
+
+            fetch('/CREATE', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                if (data.success) {
+                    messageDiv.innerHTML = `<p>Success: Person created with ID ${data.id}</p>`;
+                    document.getElementById('createForm').reset();
+                } else {
+                    messageDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('message').innerHTML = `<p>Error: ${error.message}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>

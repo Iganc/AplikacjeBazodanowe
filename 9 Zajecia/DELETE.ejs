@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Person</title>
+</head>
+<body>
+    <h1>Delete Person</h1>
+
+    <form id="deleteForm">
+        <div>
+            <label for="id">Person ID:</label>
+            <input type="number" id="id" name="id" required>
+        </div>
+
+        <button type="submit">Delete Person</button>
+    </form>
+
+    <div id="message"></div>
+    <a href="/">Back to Home</a>
+
+    <script>
+        document.getElementById('deleteForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            if (confirm('Are you sure you want to delete this person?')) {
+                const id = document.getElementById('id').value;
+
+                fetch(`/DELETE/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    document.getElementById('message').innerHTML = '<p>Person deleted successfully</p>';
+                    document.getElementById('deleteForm').reset();
+                })
+                .catch(error => {
+                    document.getElementById('message').innerHTML = `<p>Error: ${error.message}</p>`;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

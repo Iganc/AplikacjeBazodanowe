@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Read Person</title>
+</head>
+<body>
+    <h1>Read Person Details</h1>
+
+    <form id="readForm">
+        <div>
+            <label for="id">Person ID:</label>
+            <input type="number" id="id" name="id" required>
+        </div>
+
+        <button type="submit">Find Person</button>
+    </form>
+
+    <div id="personDetails"></div>
+    <a href="/">Back to Home</a>
+
+    <script>
+        document.getElementById('readForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('id').value;
+
+            fetch(`/READ/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                const detailsDiv = document.getElementById('personDetails');
+                if (data.success) {
+                    const person = data.data;
+                    detailsDiv.innerHTML = `
+                        <h2>Person Details</h2>
+                        <p>ID: ${person.id}</p>
+                        <p>First Name: ${person.first_name}</p>
+                        <p>Last Name: ${person.last_name}</p>
+                        <p>Gender: ${person.gender}</p>
+                        <p>Birth Date: ${person.birth_date}</p>
+                        <p>PESEL: ${person.pesel}</p>
+                    `;
+                } else {
+                    detailsDiv.innerHTML = `<p>Error: ${data.message}</p>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('personDetails').innerHTML = `<p>Error: ${error.message}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>

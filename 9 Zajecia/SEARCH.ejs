@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search People</title>
+</head>
+<body>
+    <h1>Search People</h1>
+
+    <form id="searchForm">
+        <div>
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName">
+        </div>
+
+        <div>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName">
+        </div>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="results"></div>
+    <a href="/">Back to Home</a>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+
+            let url = '/SEARCH?';
+            if (firstName) url += `firstName=${encodeURIComponent(firstName)}&`;
+            if (lastName) url += `lastName=${encodeURIComponent(lastName)}`;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                if (data.success) {
+                    if (data.data.length === 0) {
+                        resultsDiv.innerHTML = '<p>No results found.</p>';
+                        return;
+                    }
+
+                    let html = `
+                        <h2>Search Results (${data.count})</h2>
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Gender</th>
+                                    <th>Birth Date</th>
+                                    <th>PESEL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    data.data.forEach(person => {
+                        html += `
+                            <tr>
+                                <td>${person.id}</td>
+                                <td>${person.first_name}</td>
+                                <td>${person.last_name}</td>
+                                <td>${person.gender}</td>
+                                <td>${person.birth_date}</td>
+                                <td>${person.pesel}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += `
+                            </tbody>
+                        </table>
+                    `;
+
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>
